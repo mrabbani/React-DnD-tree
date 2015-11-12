@@ -7,7 +7,7 @@ export default class Note extends Component {
   }
 
   render() {
-    
-    return <div> {this.test} Learn Webpack</div>;
+
+    return <div> {this.props.task} </div>;
   }
 }
