@@ -4,8 +4,12 @@ import Note from './Note.jsx';
 export default class Notes extends Component {
 
   renderNote(note) {
-    return (<li key={note.id}>
-      <Note task={note.task} onEdit ={this.props.onEdit.bind(null, note.id)}/>
+    return (<li className="note" key={note.id}>
+      <Note
+        task={note.task}
+        onEdit={this.props.onEdit.bind(null, note.id)}
+        onDelete={this.props.onDelete.bind(null, note.id)}
+      />
     </li>);
   }
 

@@ -25,7 +25,9 @@ export default class App extends Component {
     this.addNote = this.addNote.bind(this);
     this.editNote = this.editNote.bind(this);
     this.findNote = this.findNote.bind(this);
+    this.deleteNote = this.deleteNote.bind(this);
   }
+
   addNote(e) {
     e.prevetDefault;
     let notes = this.state.notes.concat([{
@@ -46,6 +48,18 @@ export default class App extends Component {
     }
 
     return noteIndex;
+  }
+
+  deleteNote(id) {
+    const noteIndex = this.findNote(id);
+
+    if(noteIndex<0) {
+      return;
+    }
+    this.setState({
+      notes: this.state.notes.slice(0, noteIndex).concat(this.state.notes.slice(noteIndex+1))
+    });
+
   }
 
   editNote(noteId, task) {
@@ -69,7 +83,7 @@ export default class App extends Component {
     return (
       <div>
         <button className='add-note' onClick ={this.addNote}>+</button>
-        <Notes items={this.state.notes} onEdit={this.editNote} />
+        <Notes items={this.state.notes} onEdit={this.editNote} onDelete = {this.deleteNote} />
       </div>
     );
   }
