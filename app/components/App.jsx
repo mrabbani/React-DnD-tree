@@ -1,90 +1,48 @@
-import uuid from 'node-uuid';
-import React, {Component} from 'react';
+import React from 'react';
 import Notes from './Notes.jsx';
+import NoteActions from '../actions/NoteActions';
+import NoteStore from '../stores/NoteStore';
 
-
-export default class App extends Component {
+export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      notes: [
-        {
-          id: uuid.v4(),
-          task: "Learn Webpack"
-        },
-        {
-          id: uuid.v4(),
-          task: "Lear React"
-        },
-        {
-          id: uuid.v4(),
-          task: "Building DnD tree"
-        }
-      ]
-    };
-    this.addNote = this.addNote.bind(this);
-    this.editNote = this.editNote.bind(this);
-    this.findNote = this.findNote.bind(this);
-    this.deleteNote = this.deleteNote.bind(this);
+
+    // We have to bind the context of `storeChanged`
+    // explicitly so that `this` will point at the `App`
+    // instance. You'll be seeing this pattern a lot.
+    this.storeChanged = this.storeChanged.bind(this);
+    this.state = NoteStore.getState();
   }
-
-  addNote(e) {
-    e.prevetDefault;
-    let notes = this.state.notes.concat([{
-      id: uuid.v4(),
-      task: 'New Task'
-    }])
-    this.setState({notes });
-    console.log('add note');
+  componentDidMount() {
+    NoteStore.listen(this.storeChanged);
   }
-
-  findNote(id) {
-
-    var notes = this.state.notes;
-    const noteIndex = notes.findIndex((note) => note.id == id);
-
-    if(noteIndex<0) {
-      console.warn('Failed to find note', notes, id);
-    }
-
-    return noteIndex;
+  componentWillUnmount() {
+    NoteStore.unlisten(this.storeChanged);
   }
-
-  deleteNote(id) {
-    const noteIndex = this.findNote(id);
-
-    if(noteIndex<0) {
-      return;
-    }
-    this.setState({
-      notes: this.state.notes.slice(0, noteIndex).concat(this.state.notes.slice(noteIndex+1))
-    });
-
+  storeChanged(state) {
+    // Without proper `bind`, `this` wouldn't
+    // point at the right context (defaults to `window`
+    // in browser environment)
+    this.setState(state);
   }
-
-  editNote(noteId, task) {
-    var notes = this.state.notes;
-
-    const noteIndex = this.findNote(noteId);
-    if(noteIndex<0) {
-      return;
-    }
-
-    notes[noteIndex].task = task;
-
-    this.setState({notes});
-
-
-    console.log('note edited', noteId, task);
-  }
-
   render() {
+    const notes = this.state.notes;
 
     return (
       <div>
-        <button className='add-note' onClick ={this.addNote}>+</button>
-        <Notes items={this.state.notes} onEdit={this.editNote} onDelete = {this.deleteNote} />
+        <button className="add-note" onClick={this.addNote}>+</button>
+        <Notes items={notes}
+          onEdit={this.editNote} onDelete={this.deleteNote} />
       </div>
     );
+  }
+  addNote() {
+    NoteActions.create({task: 'New task'});
+  }
+  editNote(id, task) {
+    NoteActions.update({id, task});
+  }
+  deleteNote(id) {
+    NoteActions.delete(id);
   }
 }
