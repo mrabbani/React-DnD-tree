@@ -5,49 +5,55 @@ import NoteActions from '../actions/NoteActions';
 class NoteStore {
   constructor() {
     this.bindActions(NoteActions);
-    this.notes =[];
+    this.notes = [];
   }
 
   create(note) {
     note.id = uuid.v4();
     var notes = this.notes.concat(note);
-    this.setState({notes});
+    this.setState({
+      notes
+    });
   }
 
-  update({id, task})  {
+  update({ id, task }) {
     console.log(id);
     let notes = this.notes;
     const noteIndex = this.findNote(id);
 
-    if(noteIndex<0) {
+    if (noteIndex < 0) {
       return;
     }
 
     notes[noteIndex].task = task;
-    this.setState({notes});
+    this.setState({
+      notes
+    });
   }
 
   delete(id) {
     const noteIndex = this.findNote(id);
 
-    if(noteIndex<0) {
+    if (noteIndex < 0) {
       return;
     }
 
-    let notes = this.notes.slice(0, noteIndex).concat(this.notes.slice(noteIndex+1));
-    this.setState({notes});
+    let notes = this.notes.slice(0, noteIndex).concat(this.notes.slice(noteIndex + 1));
+    this.setState({
+      notes
+    });
   }
 
   findNote(id) {
-     const notes = this.notes;
-     const noteIndex = notes.findIndex((note)=>note.id === id);
+    const notes = this.notes;
+    const noteIndex = notes.findIndex((note) => note.id === id);
 
-     if(noteIndex<0) {
-       console.warn('failed to find note ', notes, id);
-     }
+    if (noteIndex < 0) {
+      console.warn('failed to find note ', notes, id);
+    }
 
-     return noteIndex;
-   }
+    return noteIndex;
+  }
 }
 
 export default alt.createStore(NoteStore, 'NoteStore');
