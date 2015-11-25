@@ -6,6 +6,13 @@ class NoteStore {
   constructor() {
     this.bindActions(NoteActions);
     this.notes = [];
+    this.exportPublicMethods({
+      get: this.get.bind(this)
+    });
+  }
+
+  get(ids=[]) {
+      return  ids.map((id) => this.notes[this.findNote(id)]).filter((a)=>a);
   }
 
   create(note) {
@@ -46,6 +53,7 @@ class NoteStore {
 
   findNote(id) {
     const notes = this.notes;
+    console.log('delete note', notes);
     const noteIndex = notes.findIndex((note) => note.id === id);
 
     if (noteIndex < 0) {

@@ -18,7 +18,7 @@ export default class Note extends Component {
     return (
       <input  type="text"
       autoFocus={true}
-      defaultValue={this.props.task}
+      defaultValue={this.props.value}
       onBlur={this.finishEdit}
       onKeyPress={this.checkEnter}
        />
@@ -38,12 +38,12 @@ export default class Note extends Component {
     });
   }
 
-  renderTask() {
+  renderValue() {
     const onDelete = this.props.onDelete;
-
+    const value = this.props.value;
     return (
       <div onClick={this.edit}>
-        <span className="task">{this.props.task}</span>
+        <span className="value">{value? value : "New value"}</span>
         {onDelete? this.renderDelete() : null}
        </div>
     );
@@ -62,8 +62,9 @@ export default class Note extends Component {
        editing: true
      });
   }
+
   render() {
 
-    return <div> {this.state.editing ? this.renderEdit() : this.renderTask()} </div>;
+    return <div> {this.state.editing ? this.renderEdit() : this.renderValue()} </div>;
   }
 }
