@@ -2,6 +2,8 @@ import alt from '../libs/alt';
 import uuid from 'node-uuid';
 import LaneActions from '../actions/LaneActions';
 import NoteStore from '../stores/NoteStore';
+import update from 'react/lib/update';
+
 class LaneStore {
   constructor() {
     this.bindActions(LaneActions);
@@ -19,6 +21,7 @@ class LaneStore {
 
     return laneId;
   }
+
 
   create(lane) {
     const lanes = this.lanes;
@@ -44,6 +47,7 @@ class LaneStore {
 
     this.setState({lanes});
   }
+
   delete(id) {
     const lanes = this.lanes;
     const targetId = this.findLane(id);
@@ -105,6 +109,37 @@ class LaneStore {
     }
   }
 
+  move({sourceId, targetId}) {
+    const lanes = this.lanes;
+
+    const targetLane = lanes.filter((lane) => {
+      return lane.notes.indexOf(targetId) >= 0;
+    })[0];
+    
+    var sourceLane = lanes.filter((lane) => {
+      return lane.notes.indexOf(sourceId) >= 0;
+    })[0];
+
+    console.log('source', sourceLane);
+
+    const sourceNoteIndex = sourceLane.notes.indexOf(sourceId);
+    const targetNoteIndex = targetLane.notes.indexOf(targetId);
+    if(sourceLane === targetLane) {
+      sourceLane.notes = update(sourceLane.notes, {
+        $splice: [
+          [sourceNoteIndex, 1],
+          [targetNoteIndex, 0, sourceId]
+        ]
+      });
+    }
+    else {
+      sourceLane.notes.splice(sourceNoteIndex, 1);
+      targetLane.notes.splice(targetNoteIndex, 0, sourceId);
+    }
+
+    this.setState({lanes});
+
+  }
 
 }
 

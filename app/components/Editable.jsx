@@ -43,7 +43,7 @@ export default class Note extends Component {
     const value = this.props.value;
     return (
       <div onClick={this.edit}>
-        <span className="value">{value? value : "New value"}</span>
+        <span className="value">{value? value : "New "}</span>
         {onDelete? this.renderDelete() : null}
        </div>
     );
