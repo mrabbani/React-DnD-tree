@@ -62,6 +62,7 @@ class LaneStore {
   }
 
   attachToLane({laneId, noteId}) {
+
     if( ! noteId) {
       this.waitFor(NoteStore);
       noteId = NoteStore.getState().notes.slice(-1)[0].id;
@@ -73,6 +74,8 @@ class LaneStore {
       return;
     }
 
+    this.removeNote(noteId);
+
     const lane = lanes[targetId];
 
     if(lane.notes.indexOf(noteId) === -1) {
@@ -83,6 +86,20 @@ class LaneStore {
     else {
       console.warn('already attach to lane', lane);
     }
+  }
+
+  removeNote(noteId) {
+    const lanes = this.lanes;
+    const removeLane = lanes.filter((lane) => {
+      return lane.notes.indexOf(noteId) >= 0;
+    })[0];
+
+    if( ! removeLane) {
+      return;
+    }
+    const removeNoteIndex = removeLane.notes.indexOf(noteId);
+    removeLane.notes = removeLane.notes.slice(0, removeNoteIndex).
+      concat(removeLane.notes.slice(removeNoteIndex+1));
   }
 
 
@@ -110,20 +127,17 @@ class LaneStore {
   }
 
   move({sourceId, targetId}) {
+
     const lanes = this.lanes;
-
     const targetLane = lanes.filter((lane) => {
-      return lane.notes.indexOf(targetId) >= 0;
-    })[0];
-    
-    var sourceLane = lanes.filter((lane) => {
-      return lane.notes.indexOf(sourceId) >= 0;
-    })[0];
-
-    console.log('source', sourceLane);
-
+        return lane.notes.indexOf(targetId) >= 0;
+      })[0];
+    const sourceLane = lanes.filter((lane) => {
+        return lane.notes.indexOf(sourceId) >= 0;
+      })[0];
     const sourceNoteIndex = sourceLane.notes.indexOf(sourceId);
     const targetNoteIndex = targetLane.notes.indexOf(targetId);
+
     if(sourceLane === targetLane) {
       sourceLane.notes = update(sourceLane.notes, {
         $splice: [
@@ -140,7 +154,6 @@ class LaneStore {
     this.setState({lanes});
 
   }
-
 }
 
 export default alt.createStore(LaneStore, 'LaneStore');

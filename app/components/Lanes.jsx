@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import Lane from './Lane';
-
 export default class Lanes extends Component {
   render() {
+
     return (
 
       <div className="lanes">
@@ -12,7 +12,7 @@ export default class Lanes extends Component {
   }
   renderLane(lane) {
     return (
-        <Lane className="lane" key={lane.id} lane={lane} />     
+        <Lane className="lane" key={lane.id} lane={lane} />
     );
   }
 }
